@@ -1,0 +1,92 @@
+apply plugin: 'application'
+
+buildscript {
+	repositories {
+		mavenCentral()
+		jcenter()
+		maven {
+			url 'https://plugins.gradle.org/m2/'
+		}
+		mavenLocal()
+	}
+	dependencies {
+		classpath 'me.champeau.gradle:jmh-gradle-plugin:0.4.8'
+	}
+
+	dependencies {
+		classpath "org.hibernate:hibernate-gradle-plugin:5.4.4-SNAPSHOT"
+	}
+}
+
+
+allprojects {
+//	if ( project.hasProperty( 'mavenLocal' ) ) {
+	repositories {
+//			System.out.println( " >>> Maven Local Enabled" )
+		mavenLocal()
+	}
+//	}
+	group 'org.hibernate.benchmarks.orm.hql'
+	version '1.0.0-SNAPSHOT'
+}
+
+apply from: rootProject.file( 'gradle/java-module.gradle' )
+
+apply plugin: 'java'
+
+apply plugin: 'org.hibernate.orm'
+
+apply plugin: "me.champeau.gradle.jmh"
+
+
+ext {
+	hibernateVersion = '5.4.4-SNAPSHOT'
+	reportId = ""
+
+	if ( project.hasProperty( 'reportFileNamePrefix' ) ) {
+		reportId = reportFileNamePrefix
+	}
+
+	if ( project.hasProperty( 'localJar' ) ) {
+		hibernateVersion = localJar
+	}
+	else {
+		if ( project.hasProperty( 'orm5' ) ) {
+			if ( orm5?.trim() ) {
+				hibernateVersion = orm5
+			}
+		}
+	}
+}
+
+dependencies {
+	compile 'org.openjdk.jmh:jmh-core:1.21'
+	compile project( ':benchmark-common' )
+	runtime project( ':benchmark-orm5' )
+	compile 'javax.persistence:javax.persistence-api:2.2'
+	runtime libraries.h2
+
+}
+
+hibernate {
+	enhance {
+		// any configuration goes here
+		enableLazyInitialization = true
+	}
+}
+
+
+jmh {
+	// for available options, see https://github.com/melix/jmh-gradle-plugin/blob/master/README.adoc#configuration-options
+//	exclude = ['StatelessBenchmarkTests']
+	benchmarkMode = ['avgt']
+
+	iterations = 5 //default 10
+	fork = 5 //default 10
+	warmupIterations = 5 // Number of warmup iterations to do.
+
+	def formattedDate = new Date().format( 'yyyy-MM-dd-HHmmss' )
+
+	humanOutputFile = project.file( "reports/jmh/human_${reportId}_${hibernateVersion}_${formattedDate}.txt" )
+	resultsFile = project.file( "reports/jmh/results_${reportId}_${hibernateVersion}_${formattedDate}.txt" )
+}

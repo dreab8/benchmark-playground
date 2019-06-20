@@ -1,0 +1,28 @@
+= HQL Benchmark
+
+Benchmark testing Enhancement perf.
+
+Each version must be run individually and the results can be compared using from the results file for
+each of the runs.
+
+To run using Hibernate 5.3, use:
+
+`gradlew jmh -Porm5`
+
+or
+
+`gradlew clean jmh -Porm5`
+
+
+To to use a specifi version of 5.x use:
+
+`gradlew jmh -Porm5=5.3.10.Final`
+
+or
+
+`gradlew clean jmh -Porm5=5.4.2.Final`
+
+To use a local jar a `-PlocalJar=hibernate-core-5.3.10.Final-redhat-00001-jbeap-May16.jar` can be added ( the jar file should be placed in the `libs` folder).
+
+The generated reports can be found inside the `reports/jmh` folder.
+
