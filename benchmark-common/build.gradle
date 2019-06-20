@@ -6,7 +6,7 @@ dependencies {
 
 
 	if ( project.hasProperty( 'localJar' ) ) {
-		System.out.println( ">>> Using local jar ${localJar}" )
+		logger.lifecycle( ">>> Using local jar ${localJar}" )
 
 		compile files( "../libs/${localJar}" )
 	}
@@ -14,6 +14,7 @@ dependencies {
 		compile "org.hibernate:hibernate-core:${hibernateVersion}"
 	}
 
+	runtime 'log4j:log4j:1.2.17'
 	runtime 'javax.transaction:jta:1.1'
 	runtime 'net.bytebuddy:byte-buddy:1.9.10'
 	runtime 'org.dom4j:dom4j:2.1.1@jar'

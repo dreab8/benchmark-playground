@@ -6,20 +6,27 @@
  */
 package org.hibernate.benchmarks.orm5;
 
+import java.net.URL;
 import javax.persistence.EntityManager;
 
+import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.hibernate.benchmarks.HibernateVersionSupport;
+import org.hibernate.benchmarks.VersionSupportFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 
+import org.jboss.logging.Logger;
+
 /**
  * @author Steve Ebersole
  */
 public class HibernateVersionSupportImpl implements HibernateVersionSupport {
+	private static final Logger log = Logger.getLogger( HibernateVersionSupportImpl.class );
+
 	private StandardServiceRegistry serviceRegistry;
 	private SessionFactoryImplementor sessionFactory;
 
@@ -43,7 +50,11 @@ public class HibernateVersionSupportImpl implements HibernateVersionSupport {
 		sessionFactory = (SessionFactoryImplementor) metadataSources
 				.buildMetadata()
 				.buildSessionFactory();
-		System.out.println( ">>>> Allow enhancement proxy = " + sessionFactory.getProperties().get( AvailableSettings.ALLOW_ENHANCEMENT_AS_PROXY ));
+
+		Class klass = SessionFactory.class;
+		String location = klass.getResource( '/' + klass.getName().replace( '.', '/') + ".class").getFile();
+		log.info( ">>> Using hibernate from jar = " + location.substring( 0,location.indexOf( '!' ) ));
+		log.info( "Allow enhancement proxy = " + sessionFactory.getProperties().get( AvailableSettings.ALLOW_ENHANCEMENT_AS_PROXY ));
 	}
 
 	@Override

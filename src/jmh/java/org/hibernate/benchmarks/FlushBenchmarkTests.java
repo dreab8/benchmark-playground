@@ -21,6 +21,8 @@ import org.hibernate.bytecode.enhance.spi.interceptor.LazyAttributeLoadingInterc
 import org.hibernate.engine.spi.PersistentAttributeInterceptable;
 import org.hibernate.engine.spi.PersistentAttributeInterceptor;
 
+import org.jboss.logging.Logger;
+
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
@@ -30,6 +32,8 @@ import org.openjdk.jmh.annotations.OutputTimeUnit;
  * @author Andrea Boriero
  */
 public class FlushBenchmarkTests extends BenchmarkState {
+	private static final Logger log = Logger.getLogger( FlushBenchmarkTests.class );
+
 
 	public Long lastChildId;
 
@@ -85,11 +89,8 @@ public class FlushBenchmarkTests extends BenchmarkState {
 	protected void cleanUpDatabase() {
 		inTransaction(
 				entityManager -> {
-					System.out.println( ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CLEAN UP" );
-
 					entityManager.createQuery( "delete from TestEntity" ).executeUpdate();
 					entityManager.createQuery( "delete from Entity5" ).executeUpdate();
-
 				}
 		);
 	}

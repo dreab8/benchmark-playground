@@ -20,12 +20,9 @@ buildscript {
 
 
 allprojects {
-//	if ( project.hasProperty( 'mavenLocal' ) ) {
 	repositories {
-//			System.out.println( " >>> Maven Local Enabled" )
 		mavenLocal()
 	}
-//	}
 	group 'org.hibernate.benchmarks.orm.hql'
 	version '1.0.0-SNAPSHOT'
 }

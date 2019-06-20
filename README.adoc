@@ -25,4 +25,3 @@ or
 To use a local jar a `-PlocalJar=hibernate-core-5.3.10.Final-redhat-00001-jbeap-May16.jar` can be added ( the jar file should be placed in the `libs` folder).
 
 The generated reports can be found inside the `reports/jmh` folder.
-
