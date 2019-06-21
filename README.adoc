@@ -3,18 +3,9 @@
 Benchmark testing Enhancement perf.
 
 Each version must be run individually and the results can be compared using from the results file for
-each of the runs.
+each of the runs (the generated reports can be found inside the `reports/jmh` folder).
 
-To run using Hibernate 5.3, use:
-
-`gradlew jmh -Porm5`
-
-or
-
-`gradlew clean jmh -Porm5`
-
-
-To to use a specifi version of 5.x use:
+The parameter `-Porm5` can be used in orde to a specific version of Hibenrate 5.x  :
 
 `gradlew jmh -Porm5=5.3.10.Final`
 
@@ -22,6 +13,16 @@ or
 
 `gradlew clean jmh -Porm5=5.4.2.Final`
 
-To use a local jar a `-PlocalJar=hibernate-core-5.3.10.Final-redhat-00001-jbeap-May16.jar` can be added ( the jar file should be placed in the `libs` folder).
+The parameter `-Porm4` can be used in orde to a specific version of Hibenrate 4.3.x  :
 
-The generated reports can be found inside the `reports/jmh` folder.
+`gradlew jmh -Porm4=4.3.11.Final`
+
+or
+
+`gradlew clean jmh -Porm4=4.3.11.Final`
+
+The parameter  `-PlocalJar` permit to use a local hibernate jar a :
+ `gradlew jmh -Porm5 -PlocalJar=hibernate-core-5.3.10.Final-redhat-00001-jbeap-May16.jar`
+(it is still necessary to use the parameter `-Porm5` if the jar is a version of Hibernate 5.x or `-Porm4` in case is a version of hibernate 4.3.x but without providing any value)
+
+*The jar file should be placed inside the `libs` folder.*

@@ -6,20 +6,21 @@
  */
 package org.hibernate.benchmarks;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.hibernate.benchmarks.model.TestEntity;
 import org.hibernate.benchmarks.model.Entity1;
 import org.hibernate.benchmarks.model.Entity2;
 import org.hibernate.benchmarks.model.Entity3;
-import org.hibernate.benchmarks.model.Entity5;
-import org.hibernate.benchmarks.model.Entity7;
 import org.hibernate.benchmarks.model.Entity4;
+import org.hibernate.benchmarks.model.Entity5;
 import org.hibernate.benchmarks.model.Entity6;
+import org.hibernate.benchmarks.model.Entity7;
 import org.hibernate.benchmarks.model.Entity8;
-import org.hibernate.bytecode.enhance.spi.interceptor.LazyAttributeLoadingInterceptor;
-import org.hibernate.engine.spi.PersistentAttributeInterceptable;
-import org.hibernate.engine.spi.PersistentAttributeInterceptor;
+import org.hibernate.benchmarks.model.TestEntity;
+//import org.hibernate.bytecode.enhance.spi.interceptor.LazyAttributeLoadingInterceptor;
+//import org.hibernate.engine.spi.PersistentAttributeInterceptable;
+//import org.hibernate.engine.spi.PersistentAttributeInterceptor;
 
 import org.jboss.logging.Logger;
 
@@ -37,24 +38,45 @@ public class FlushBenchmarkTests extends BenchmarkState {
 
 	public Long lastChildId;
 
+	public static final int NUMBER_OF_ENTITIES_TO_Create = 500;
+
 
 	@Benchmark
 	@BenchmarkMode(Mode.AverageTime)
 	@OutputTimeUnit(TimeUnit.MICROSECONDS)
-	public Object testDynamicScroll(FlushBenchmarkTests state) {
+	public Object testUpdatingAField(FlushBenchmarkTests state) {
 
 		return state.inTransaction(
 				entityManager -> {
 					TestEntity loadedTestEntity = entityManager.getReference( TestEntity.class, lastChildId );
 
-					final PersistentAttributeInterceptable interceptable = (PersistentAttributeInterceptable) loadedTestEntity;
-					final PersistentAttributeInterceptor interceptor = interceptable.$$_hibernate_getInterceptor();
-					if ( interceptor instanceof LazyAttributeLoadingInterceptor ) {
-						throw new RuntimeException( "It should be an instance of EnhancementAsProxyLazinessInterceptor" );
+//					final PersistentAttributeInterceptable interceptable = (PersistentAttributeInterceptable) loadedTestEntity;
+//					final PersistentAttributeInterceptor interceptor = interceptable.$$_hibernate_getInterceptor();
+//					if ( interceptor instanceof LazyAttributeLoadingInterceptor ) {
+//						throw new RuntimeException( "It should be an instance of EnhancementAsProxyLazinessInterceptor" );
 
-					}
+//					}
 					loadedTestEntity.setName( "new name" );
 					return lastChildId;
+				}
+		);
+	}
+
+	@Benchmark
+	@BenchmarkMode(Mode.AverageTime)
+	@OutputTimeUnit(TimeUnit.MICROSECONDS)
+	public Object testGetResultList(FlushBenchmarkTests state) {
+
+		return state.inTransaction(
+				entityManager -> {
+					List<TestEntity> testEntitys = entityManager.createQuery( "from TestEntity" ).getResultList();
+					entityManager
+							.createQuery( "from TestEntity" )
+							.getResultList();
+					for ( TestEntity loadedTestEntity : testEntitys ) {
+						loadedTestEntity.setName( "new name" );
+					}
+					return testEntitys.size();
 				}
 		);
 	}
@@ -73,7 +95,7 @@ public class FlushBenchmarkTests extends BenchmarkState {
 					Entity5 entity5 = new Entity5();
 					entityManager.persist( entity5 );
 					TestEntity testEntity = null;
-					for ( int i = 0; i < 10 + 1; i++ ) {
+					for ( int i = 0; i < NUMBER_OF_ENTITIES_TO_Create + 1; i++ ) {
 						testEntity = new TestEntity();
 						// Association management should kick in here
 						testEntity.setEntity5( entity5 );

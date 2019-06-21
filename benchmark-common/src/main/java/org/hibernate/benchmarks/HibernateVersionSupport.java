@@ -8,7 +8,7 @@ package org.hibernate.benchmarks;
 
 import javax.persistence.EntityManager;
 
-import org.hibernate.StatelessSession;
+//import org.hibernate.StatelessSession;
 
 /**
  * The main abstraction between different versions of Hibernate
@@ -26,6 +26,6 @@ public interface HibernateVersionSupport {
 
 	EntityManager getEntityManager();
 
-	StatelessSession getStatelessSession();
+//	StatelessSession getStatelessSession();
 }
 

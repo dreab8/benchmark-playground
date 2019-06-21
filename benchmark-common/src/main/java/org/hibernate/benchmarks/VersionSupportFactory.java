@@ -20,7 +20,8 @@ public class VersionSupportFactory {
 	private static final Logger log = Logger.getLogger( VersionSupportFactory.class );
 
 	public static final String[] VERSION_SUPPORT_IMPL_NAMES = {
-			"org.hibernate.benchmarks.orm5.HibernateVersionSupportImpl"
+			"org.hibernate.benchmarks.orm5.HibernateVersionSupportImpl",
+			"org.hibernate.benchmarks.orm4.HibernateVersionSupportImpl",
 	};
 
 	public static HibernateVersionSupport buildHibernateVersionSupport() {

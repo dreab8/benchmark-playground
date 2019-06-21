@@ -16,7 +16,7 @@ import javax.persistence.Id;
 @Entity
 public class Entity2 {
 	@Id
-	@GeneratedValue(generator = "increment")
+	@GeneratedValue
 	private Long id;
 	private String name;
 

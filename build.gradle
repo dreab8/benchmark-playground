@@ -1,4 +1,16 @@
 apply plugin: 'application'
+apply plugin: 'java'
+
+if ( project.hasProperty( 'orm4' ) ) {
+	apply plugin: 'maven'
+	apply plugin: 'hibernate'
+}
+else {
+	apply plugin: 'org.hibernate.orm'
+
+}
+
+apply plugin: "me.champeau.gradle.jmh"
 
 buildscript {
 	repositories {
@@ -11,13 +23,29 @@ buildscript {
 	}
 	dependencies {
 		classpath 'me.champeau.gradle:jmh-gradle-plugin:0.4.8'
+
+		if ( project.hasProperty( 'orm4' ) ) {
+			if ( orm4?.trim() ) {
+				classpath "org.hibernate:hibernate-gradle-plugin:${orm4}"
+			}
+			else {
+				classpath "org.hibernate:hibernate-gradle-plugin:4.3.11.Final"
+			}
+		}
+		else if ( project.hasProperty( 'orm5' ) ) {
+			if ( orm5?.trim() ) {
+				classpath "org.hibernate:hibernate-gradle-plugin:${orm5}"
+			}
+			else {
+				classpath "org.hibernate:hibernate-gradle-plugin:5.4.4-SNAPSHOT"
+			}
+		}
+		else {
+			classpath "org.hibernate:hibernate-gradle-plugin:5.4.4-SNAPSHOT"
+		}
 	}
 
-	dependencies {
-		classpath "org.hibernate:hibernate-gradle-plugin:5.4.4-SNAPSHOT"
-	}
 }
-
 
 allprojects {
 	repositories {
@@ -28,13 +56,6 @@ allprojects {
 }
 
 apply from: rootProject.file( 'gradle/java-module.gradle' )
-
-apply plugin: 'java'
-
-apply plugin: 'org.hibernate.orm'
-
-apply plugin: "me.champeau.gradle.jmh"
-
 
 ext {
 	hibernateVersion = '5.4.4-SNAPSHOT'
@@ -53,22 +74,41 @@ ext {
 				hibernateVersion = orm5
 			}
 		}
+		if ( project.hasProperty( 'orm4' ) ) {
+			if ( orm4?.trim() ) {
+				hibernateVersion = orm4
+			}
+		}
 	}
 }
 
 dependencies {
 	compile 'org.openjdk.jmh:jmh-core:1.21'
+	compile group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: hibernateVersion
+
 	compile project( ':benchmark-common' )
-	runtime project( ':benchmark-orm5' )
 	compile 'javax.persistence:javax.persistence-api:2.2'
 	runtime libraries.h2
 
 }
 
-hibernate {
-	enhance {
-		// any configuration goes here
-		enableLazyInitialization = true
+if ( !project.hasProperty( 'orm4' ) ) {
+	hibernate {
+		enhance {
+			// any configuration goes here
+			enableLazyInitialization = true
+		}
+	}
+}
+
+afterEvaluate {
+	dependencies {
+		if ( project.hasProperty( 'orm4' ) ) {
+			runtime project( ':benchmark-orm4' )
+		}
+		else {
+			runtime project( ':benchmark-orm5' )
+		}
 	}
 }
 

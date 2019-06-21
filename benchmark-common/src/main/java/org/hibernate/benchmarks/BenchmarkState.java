@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.persistence.EntityManager;
 
-import org.hibernate.StatelessSession;
+//import org.hibernate.StatelessSession;
 
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
@@ -67,25 +67,25 @@ public class BenchmarkState {
 	}
 
 
-	public <T> T inStatelessTransaction(Function<StatelessSession, T> function) {
-		StatelessSession statelessSession = versionSupport.getStatelessSession();
-		T result = null;
-		try {
-			statelessSession.getTransaction().begin();
-			result = function.apply( statelessSession );
-			statelessSession.getTransaction().commit();
-		}
-		catch (Exception e) {
-			if ( statelessSession.getTransaction().isActive() ) {
-				statelessSession.getTransaction().rollback();
-			}
-			throw e;
-		}
-		finally {
-			statelessSession.close();
-		}
-		return result;
-	}
+//	public <T> T inStatelessTransaction(Function<StatelessSession, T> function) {
+//		StatelessSession statelessSession = versionSupport.getStatelessSession();
+//		T result = null;
+//		try {
+//			statelessSession.getTransaction().begin();
+//			result = function.apply( statelessSession );
+//			statelessSession.getTransaction().commit();
+//		}
+//		catch (Exception e) {
+//			if ( statelessSession.getTransaction().isActive() ) {
+//				statelessSession.getTransaction().rollback();
+//			}
+//			throw e;
+//		}
+//		finally {
+//			statelessSession.close();
+//		}
+//		return result;
+//	}
 
 	public void inTransaction(Consumer<EntityManager> consumer) {
 		EntityManager em = versionSupport.getEntityManager();
@@ -104,9 +104,9 @@ public class BenchmarkState {
 		}
 	}
 
-	public StatelessSession getStatelessSession() {
-		return versionSupport.getStatelessSession();
-	}
+//	public StatelessSession getStatelessSession() {
+//		return versionSupport.getStatelessSession();
+//	}
 
 	protected Class[] getAnnotatedClasses() {
 		return new Class[] {};

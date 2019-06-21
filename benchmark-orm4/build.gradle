@@ -1,0 +1,20 @@
+apply from: rootProject.file( 'gradle/java-module.gradle' )
+
+dependencies {
+	compile project( ':benchmark-common' )
+
+	if ( hibernateVersion.startsWith( "4." ) ) {
+		if ( project.hasProperty( 'localJar' ) ) {
+			logger.lifecycle( ">>> Using local jar ${localJar}" )
+
+			compile files( "../libs/${localJar}" )
+		}
+		else {
+			compile "org.hibernate:hibernate-core:${hibernateVersion}"
+		}
+	}
+	else {
+		compile "org.hibernate:hibernate-core:4.3.11.Final"
+
+	}
+}
