@@ -70,9 +70,6 @@ public class FlushBenchmarkTests extends BenchmarkState {
 		return state.inTransaction(
 				entityManager -> {
 					List<TestEntity> testEntitys = entityManager.createQuery( "from TestEntity" ).getResultList();
-					entityManager
-							.createQuery( "from TestEntity" )
-							.getResultList();
 					for ( TestEntity loadedTestEntity : testEntitys ) {
 						loadedTestEntity.setName( "new name" );
 					}
