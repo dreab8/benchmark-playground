@@ -4,11 +4,12 @@ dependencies {
 	compile project( ':benchmark-common' )
 
 	if ( project.hasProperty( 'localJar' ) ) {
-		logger.lifecycle( ">>> Using local jar ${localJar}" )
+		logger.lifecycle( ">>> Using local jar ${rootProject.file( "libs/${localJar}" ).name}" )
 
-		compile files( "../libs/${localJar}" )
+		compile files( rootProject.file( "libs/${localJar}" ) )
 	}
 	else {
 		compile "org.hibernate:hibernate-core:${hibernateVersion}"
 	}
+
 }

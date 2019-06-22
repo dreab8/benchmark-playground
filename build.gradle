@@ -1,5 +1,6 @@
+apply from: rootProject.file( 'gradle/java-module.gradle' )
+
 apply plugin: 'application'
-apply plugin: 'java'
 
 if ( project.hasProperty( 'orm4' ) ) {
 	apply plugin: 'maven'
@@ -53,9 +54,9 @@ allprojects {
 	}
 	group 'org.hibernate.benchmarks.orm.hql'
 	version '1.0.0-SNAPSHOT'
-}
 
-apply from: rootProject.file( 'gradle/java-module.gradle' )
+
+}
 
 ext {
 	hibernateVersion = '5.4.4-SNAPSHOT'
@@ -83,14 +84,23 @@ ext {
 }
 
 dependencies {
-	compile 'org.openjdk.jmh:jmh-core:1.21'
-	compile group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: hibernateVersion
-
 	compile project( ':benchmark-common' )
+
+	compile 'org.openjdk.jmh:jmh-core:1.21'
+
 	compile 'javax.persistence:javax.persistence-api:2.2'
 	runtime libraries.h2
 
+	if ( project.hasProperty( 'localJar' ) ) {
+		logger.lifecycle( ">>> Using local jar ${rootProject.file( "libs/${localJar}" ).name}" )
+
+		compile files( rootProject.file( "libs/${localJar}" ))
+	}
+	else {
+		compile "org.hibernate:hibernate-core:${hibernateVersion}"
+	}
 }
+
 
 if ( !project.hasProperty( 'orm4' ) ) {
 	hibernate {
